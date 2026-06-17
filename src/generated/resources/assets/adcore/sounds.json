@@ -1,0 +1,18 @@
+{
+  "evasion_success": {
+    "sounds": [
+      "adcore:evasion_success_0",
+      "adcore:evasion_success_1",
+      "adcore:evasion_success_2"
+    ],
+    "subtitle": "subtitle.adcore.sound.evasion_success"
+  },
+  "hit_failure": {
+    "sounds": [
+      "adcore:hit_failure_0",
+      "adcore:hit_failure_1",
+      "adcore:hit_failure_2"
+    ],
+    "subtitle": "subtitle.adcore.sound.hit_failure"
+  }
+}

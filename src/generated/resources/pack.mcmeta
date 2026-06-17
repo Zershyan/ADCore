@@ -1,0 +1,12 @@
+{
+  "pack": {
+    "description": {
+      "translate": "adcore.resources"
+    },
+    "max_format": 101,
+    "min_format": [
+      101,
+      1
+    ]
+  }
+}

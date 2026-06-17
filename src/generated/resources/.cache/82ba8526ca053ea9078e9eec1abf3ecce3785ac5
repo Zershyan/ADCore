@@ -1,0 +1,8 @@
+// 26.1.2	2026-05-13T23:25:22.3439431	Tags for minecraft:damage_type mod id adcore
+04098c88183e94397df08626e210cd829fc15621 data/minecraft/tags/damage_type/bypasses_armor.json
+fb8d709a614c0f72e35f9a24f1d56a06aa137204 data/minecraft/tags/damage_type/bypasses_cooldown.json
+6e0d6f27739480785584dc655b62daecc721eb92 data/minecraft/tags/damage_type/bypasses_effects.json
+6e0d6f27739480785584dc655b62daecc721eb92 data/minecraft/tags/damage_type/bypasses_enchantments.json
+6e0d6f27739480785584dc655b62daecc721eb92 data/minecraft/tags/damage_type/bypasses_resistance.json
+04098c88183e94397df08626e210cd829fc15621 data/minecraft/tags/damage_type/bypasses_wolf_armor.json
+fb8d709a614c0f72e35f9a24f1d56a06aa137204 data/minecraft/tags/damage_type/is_player_attack.json

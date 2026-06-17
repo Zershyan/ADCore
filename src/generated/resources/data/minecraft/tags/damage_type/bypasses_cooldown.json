@@ -1,0 +1,8 @@
+{
+  "values": [
+    "adcore:normal_damage",
+    "adcore:attack_damage",
+    "adcore:magic_damage",
+    "adcore:true_damage"
+  ]
+}

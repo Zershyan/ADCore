@@ -1,0 +1,5 @@
+// 26.1.2	2026-05-12T23:20:38.9010368	Registries
+5bf464c37c36ffda3ac3c0ce6e76a596bc2fd5e3 data/adcore/damage_type/attack_damage.json
+f58510e4d7df8910c14bdbf2f27993602cfc81de data/adcore/damage_type/magic_damage.json
+d83f0900d282dee531cf7d1522bc0601c24a8773 data/adcore/damage_type/normal_damage.json
+4e9c5a52d771a5fc2a7b94b69882a2146db35c58 data/adcore/damage_type/true_damage.json
