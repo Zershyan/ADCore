@@ -1,4 +1,4 @@
-package io.zershyan.adcore.util;
+package io.zershyan.adcore.util.mixin;
 
 public interface IMixinLivingEntity {
     boolean adcore$isInCooldownTime();

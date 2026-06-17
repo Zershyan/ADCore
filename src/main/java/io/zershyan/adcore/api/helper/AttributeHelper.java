@@ -1,6 +1,5 @@
 package io.zershyan.adcore.api.helper;
 
-import com.mojang.logging.LogUtils;
 import io.zershyan.adcore.common.registry.ADCAttachments;
 import io.zershyan.adcore.common.registry.entry.condition.modifier.ConditionModifier;
 import io.zershyan.adcore.common.registry.entry.condition.modifier.ConditionModifierMap;
@@ -12,51 +11,55 @@ import net.minecraft.world.entity.ai.attributes.Attribute;
 import net.minecraft.world.entity.ai.attributes.AttributeInstance;
 import net.minecraft.world.entity.ai.attributes.AttributeModifier;
 
-import java.util.*;
+import java.util.Collection;
+import java.util.HashMap;
+import java.util.Map;
 
-public class AttributeHelperV2 extends ADCHelper{
-    private final LivingEntity entity;
-    public AttributeHelperV2(LivingEntity entity) {
+public class AttributeHelper extends ADCHelper{
+    private final Holder<Attribute> attribute;
+    public AttributeHelper(LivingEntity entity, Holder<Attribute> attribute) {
         super(entity);
-        this.entity = entity;
+        this.attribute = attribute;
     }
 
-    public float getValue(Holder<Attribute> attribute, float defaultValue) {
+    public float getValue(float defaultValue) {
         try {
-            return getValue(attribute).floatValue();
+            return getValue().floatValue();
         } catch (Exception e) {
-            LogUtils.getLogger().error(e.getMessage());
-            return defaultValue;
+            return (float) attribute.value().sanitizeValue(defaultValue);
         }
     }
 
-    public boolean getValue(Holder<Attribute> attribute, boolean defaultValue) {
-        return getValue(attribute, defaultValue ? 1.0f : 0.0f) == 1.0f;
+    public boolean getValue(boolean defaultValue) {
+        return getValue(defaultValue ? 1.0f : 0.0f) == 1.0f;
     }
 
-    public Double getValue(Holder<Attribute> attribute) {
+    public Double getValue() {
         AttributeInstance instance = entity.getAttribute(attribute);
         if(instance == null) throw new RuntimeException("The attribute does not exist.");
         if(entity.hasData(ADCAttachments.CONDITION_ATTRIBUTE_MODIFIER)) {
             Map<Holder<Attribute>, ConditionModifierMap> modifierMapMap = entity.getData(ADCAttachments.CONDITION_ATTRIBUTE_MODIFIER);
             if(modifierMapMap.containsKey(attribute)) {
                 ConditionModifierMap modifierMap = modifierMapMap.get(attribute);
+                //计算基础数值
                 double base = instance.getBaseValue();
                 for(AttributeModifier modifier : getOriginModifiers(AttributeModifier.Operation.ADD_VALUE, instance))
                     base += modifier.amount();
                 for (ConditionModifier conditionModifier : modifierMap.getModifiersOrEmpty(AttributeModifier.Operation.ADD_VALUE))
-                    if(conditionModifier.testCondition()) base += conditionModifier.amount();
+                    if(conditionModifier.testCondition(entity)) base += conditionModifier.amount();
 
+                //计算基础乘区
                 double result = base;
                 for(AttributeModifier modifier : getOriginModifiers(AttributeModifier.Operation.ADD_MULTIPLIED_BASE, instance))
                     result += base * modifier.amount();
                 for (ConditionModifier conditionModifier : modifierMap.getModifiersOrEmpty(AttributeModifier.Operation.ADD_MULTIPLIED_BASE))
-                    if(conditionModifier.testCondition()) result += base * conditionModifier.amount();
+                    if(conditionModifier.testCondition(entity)) result += base * conditionModifier.amount();
 
+                //计算独立乘区
                 for(AttributeModifier modifier : getOriginModifiers(AttributeModifier.Operation.ADD_MULTIPLIED_TOTAL, instance))
                     result *= (double)1.0F + modifier.amount();
                 for(ConditionModifier conditionModifier : modifierMap.getModifiersOrEmpty(AttributeModifier.Operation.ADD_MULTIPLIED_TOTAL))
-                    result *= (double)1.0F + conditionModifier.amount();
+                    if(conditionModifier.testCondition(entity)) result *= (double)1.0F + conditionModifier.amount();
 
                 return attribute.value().sanitizeValue(result);
             }
@@ -64,54 +67,107 @@ public class AttributeHelperV2 extends ADCHelper{
         return instance.getValue();
     }
 
-    private static Collection<AttributeModifier> getOriginModifiers(AttributeModifier.Operation operation, AttributeInstance instance) {
+    public float getSpecificValue() {
+        AttributeInstance instance = entity.getAttribute(attribute);
+        if(instance == null) throw new RuntimeException("The attribute does not exist.");
+        Map<Holder<Attribute>, ConditionModifierMap> modifierMapMap = entity.getData(ADCAttachments.CONDITION_ATTRIBUTE_MODIFIER);
+
+        //计算基础乘区
+        float num = 1.0f;
+        for(AttributeModifier modifier : AttributeHelper.getOriginModifiers(AttributeModifier.Operation.ADD_MULTIPLIED_BASE, instance))
+            num *= 1.0f - (float) modifier.amount();
+        if(modifierMapMap.containsKey(attribute)) {
+            for (ConditionModifier conditionModifier : modifierMapMap.get(attribute).getModifiersOrEmpty(AttributeModifier.Operation.ADD_MULTIPLIED_BASE))
+                if(conditionModifier.testCondition(entity)) num *= 1.0f - (float) conditionModifier.amount();
+        }
+
+        //计算独立乘区
+        float result = 1.0f - num;
+        for(AttributeModifier modifier : AttributeHelper.getOriginModifiers(AttributeModifier.Operation.ADD_MULTIPLIED_TOTAL, instance))
+            result *= 1.0f + (float) modifier.amount();
+        if(modifierMapMap.containsKey(attribute)) {
+            for (ConditionModifier conditionModifier : modifierMapMap.get(attribute).getModifiersOrEmpty(AttributeModifier.Operation.ADD_MULTIPLIED_TOTAL))
+                if(conditionModifier.testCondition(entity)) result *= 1.0f + (float) conditionModifier.amount();
+        }
+        return (float) attribute.value().sanitizeValue(result);
+    }
+
+    public static Collection<AttributeModifier> getOriginModifiers(AttributeModifier.Operation operation, AttributeInstance instance) {
         return ((IMixinAttributeInstance) instance).adcore$getModifiersOrEmpty(operation);
     }
 
-    public void modifyAttributeTransient(Holder<Attribute> attribute, AttributeModifier modifier) {
-        modifyAttribute(attribute, modifier, false);
+    public void modifyAttributeTransient(AttributeModifier modifier) {
+        modifyAttribute(modifier, false);
     }
 
-    public void modifyAttributePermanent(Holder<Attribute> attribute, AttributeModifier modifier) {
-        modifyAttribute(attribute, modifier, true);
+    public void modifyAttributePermanent(AttributeModifier modifier) {
+        modifyAttribute(modifier, true);
     }
 
-    private void modifyAttribute(Holder<Attribute> attribute, AttributeModifier modifier, boolean permanent) {
+    public void modifyAttribute(AttributeModifier modifier, boolean permanent) {
         AttributeInstance instance = entity.getAttribute(attribute);
         if(instance == null) return;
         if(permanent) instance.addOrReplacePermanentModifier(modifier);
         else instance.addOrUpdateTransientModifier(modifier);
     }
 
-    public void modifyAttributeCondition(Holder<Attribute> attribute, ConditionModifier modifier) {
+    public void modifyAttributeCondition(ConditionModifier modifier) {
         Map<Holder<Attribute>, ConditionModifierMap> modifierMapMap = new HashMap<>(entity.getData(ADCAttachments.CONDITION_ATTRIBUTE_MODIFIER));
-        ConditionModifierMap modifierMap;
-        if(!modifierMapMap.containsKey(attribute)) {
-            modifierMap = new ConditionModifierMap();
-            modifierMapMap.put(attribute, modifierMap);
-        } else modifierMap = modifierMapMap.get(attribute);
+        ConditionModifierMap modifierMap = modifierMapMap.getOrDefault(attribute, new ConditionModifierMap());
         AttributeModifier.Operation operation = modifier.operation();
-        Map<Identifier, ConditionModifier> map;
-        if(modifierMap.containsKey(operation)) {
-            map = new HashMap<>();
-            modifierMap.put(operation, map);
-        }else map = modifierMap.get(operation);
+        Map<Identifier, ConditionModifier> map = new HashMap<>(modifierMap.getOrDefault(operation, new HashMap<>()));
         map.put(modifier.id(), modifier);
+        modifierMap.put(operation, map);
+        modifierMapMap.put(attribute, modifierMap);
         entity.setData(ADCAttachments.CONDITION_ATTRIBUTE_MODIFIER, modifierMapMap);
     }
 
-    public void removeModifier(Holder<Attribute> attribute, Identifier id) {
+    public void removeModifier(Identifier id) {
         AttributeInstance instance = entity.getAttribute(attribute);
         if(instance == null) return;
         instance.removeModifier(id);
     }
 
-    private void removeConditionModifier(Holder<Attribute> attribute, Identifier id) {
+    public void removeConditionModifier(Identifier id) {
         Map<Holder<Attribute>, ConditionModifierMap> modifierMapMap = new HashMap<>(entity.getData(ADCAttachments.CONDITION_ATTRIBUTE_MODIFIER));
         if(modifierMapMap.containsKey(attribute)) {
             ConditionModifierMap modifierMap = modifierMapMap.get(attribute);
-            modifierMap.values()
+            for (AttributeModifier.Operation value : AttributeModifier.Operation.values()) {
+                if(modifierMap.containsKey(value)) {
+                    Map<Identifier, ConditionModifier> map = new HashMap<>(modifierMap.get(value));
+                    map.remove(id);
+                    modifierMap.put(value, map);
+                }
+            }
         }
+        entity.setData(ADCAttachments.CONDITION_ATTRIBUTE_MODIFIER, modifierMapMap);
+    }
 
+    public void setBaseValue(double value) {
+        AttributeInstance instance = entity.getAttribute(attribute);
+        if(instance == null) return;
+        instance.setBaseValue(value);
+    }
+
+    public boolean setBaseBool(Identifier identifier, boolean bool) {
+        AttributeInstance instance = entity.getAttribute(attribute);
+        if(instance == null) return false;
+        instance.removeModifiers();
+        int value = (int) instance.getValue();
+        if(value == 1) {
+            if(bool) return true;
+            AttributeModifier modifier = new AttributeModifier(identifier, -1, AttributeModifier.Operation.ADD_VALUE);
+            instance.addPermanentModifier(modifier);
+        } else if(value == 0) {
+            if(!bool) return true;
+            AttributeModifier modifier = new AttributeModifier(identifier, 1, AttributeModifier.Operation.ADD_VALUE);
+            instance.addPermanentModifier(modifier);
+        } else instance.setBaseValue(bool ? 1.0f : 0.0f);
+        return true;
+    }
+
+    public float getBaseValue(float defaultValue) {
+        AttributeInstance instance = entity.getAttribute(attribute);
+        return instance == null ? defaultValue : (float) instance.getBaseValue();
     }
 }

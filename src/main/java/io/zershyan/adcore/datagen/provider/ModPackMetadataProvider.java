@@ -1,4 +1,4 @@
-package io.zershyan.adcore.datagen.provider.server;
+package io.zershyan.adcore.datagen.provider;
 
 import io.zershyan.adcore.datagen.init.TranslatableLang;
 import net.minecraft.DetectedVersion;

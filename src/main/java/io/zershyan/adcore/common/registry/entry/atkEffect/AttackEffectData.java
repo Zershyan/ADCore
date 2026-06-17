@@ -1,4 +1,4 @@
-package io.zershyan.adcore.common.registry.atkEffect;
+package io.zershyan.adcore.common.registry.entry.atkEffect;
 
 import com.mojang.serialization.Codec;
 import com.mojang.serialization.codecs.RecordCodecBuilder;
@@ -6,7 +6,7 @@ import net.minecraft.resources.Identifier;
 import net.minecraft.world.entity.LivingEntity;
 import org.jetbrains.annotations.Nullable;
 
-import java.util.Objects;
+import java.util.Optional;
 
 public class AttackEffectData {
     public static final Codec<AttackEffectData> CODEC = RecordCodecBuilder.create(i -> i.group(
@@ -33,10 +33,9 @@ public class AttackEffectData {
         return new AttackEffectData(effect);
     }
 
-    @Nullable
     public static AttackEffectData of(Identifier id, int triggerCount) {
         AttackEffect attackEffect = AttackEffectRegistry.REGISTRY.getValue(id);
-        if(attackEffect == null) return null;
+        if(attackEffect == null) throw new RuntimeException("Canvas doesn't exist.");
         else return new AttackEffectData(attackEffect, triggerCount);
     }
 
@@ -57,7 +56,8 @@ public class AttackEffectData {
         return durationTicks;
     }
 
-    private Identifier getId() {
-        return Objects.requireNonNull(AttackEffectRegistry.REGISTRY.getKey(effect));
+    public Identifier getId() {
+        return Optional.ofNullable(AttackEffectRegistry.REGISTRY.getKey(effect)).orElseThrow(
+                () -> new NullPointerException("Can not find registry"));
     }
 }

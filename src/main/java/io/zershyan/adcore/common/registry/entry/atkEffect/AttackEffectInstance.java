@@ -1,4 +1,4 @@
-package io.zershyan.adcore.common.registry.atkEffect;
+package io.zershyan.adcore.common.registry.entry.atkEffect;
 
 import net.minecraft.world.damagesource.DamageSource;
 import net.minecraft.world.entity.LivingEntity;

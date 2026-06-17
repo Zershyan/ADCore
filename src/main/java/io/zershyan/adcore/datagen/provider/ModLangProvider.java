@@ -1,16 +1,13 @@
-package io.zershyan.adcore.datagen.provider.client;
+package io.zershyan.adcore.datagen.provider;
 
 import com.mojang.logging.LogUtils;
 import io.zershyan.adcore.ADCore;
-import io.zershyan.adcore.datagen.init.ModLang;
+import io.zershyan.adcore.datagen.init.ADCoreLang;
 import net.minecraft.core.Holder;
 import net.minecraft.data.PackOutput;
-import net.minecraft.resources.ResourceKey;
 import net.minecraft.tags.TagKey;
-import net.minecraft.world.damagesource.DamageType;
 import net.minecraft.world.effect.MobEffect;
 import net.minecraft.world.entity.EntityType;
-import net.minecraft.world.entity.ai.attributes.Attribute;
 import net.minecraft.world.item.Item;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.level.block.Block;
@@ -21,7 +18,7 @@ public class ModLangProvider extends LanguageProvider {
     private static final String enUs = "en_us";
     private static final String zhCn = "zh_cn";
     static {
-        ModLang.init();
+        ADCoreLang.init();
     }
 
     public ModLangProvider(PackOutput output, String locale) {
@@ -32,9 +29,9 @@ public class ModLangProvider extends LanguageProvider {
     @Override
     protected void addTranslations() {
         switch (locale){
-            case enUs -> ModLang.langList.forEach(langEntity -> addTranslation(
+            case enUs -> ADCoreLang.langList.forEach(langEntity -> addTranslation(
                     langEntity.key(), langEntity.lang().enUs()));
-            case zhCn -> ModLang.langList.forEach(langEntity -> addTranslation(
+            case zhCn -> ADCoreLang.langList.forEach(langEntity -> addTranslation(
                     langEntity.key(), langEntity.lang().zhCn()));
         }
     }
@@ -48,11 +45,7 @@ public class ModLangProvider extends LanguageProvider {
             case MobEffect object -> add(object, string);
             case EntityType<?> object -> add(object, string);
             case TagKey<?> object -> add(object, string);
-            case Holder<?> object -> {
-                if (object instanceof Attribute object1) {
-                    add(object1.getDescriptionId(), string);
-                }
-            }
+            case Holder<?> object -> add(ADCoreLang.getKey(object), string);
             default -> {
                 LogUtils.getLogger().error("Unknown object type: {}", o.getClass());
                 add(o.toString(), string);

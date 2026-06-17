@@ -4,11 +4,15 @@ import net.minecraft.world.damagesource.DamageSource;
 import net.minecraft.world.entity.LivingEntity;
 import net.neoforged.bus.api.Event;
 
-public class ADCoreExclusiveHurtEvent extends Event {
+/**
+ * You can use this event to control all the damage about if cause ADCore damage only.
+ * If onlyADCoreCausingDamage is true, all the original damage will be canceled.
+ */
+public class ADCExclusiveHurtEvent extends Event {
     private final LivingEntity entity;
     private final DamageSource source;
     private boolean onlyADCoreCausingDamage;
-    public ADCoreExclusiveHurtEvent(LivingEntity entity, DamageSource source, boolean onlyADCoreCausingDamage) {
+    public ADCExclusiveHurtEvent(LivingEntity entity, DamageSource source, boolean onlyADCoreCausingDamage) {
         this.entity = entity;
         this.source = source;
         this.onlyADCoreCausingDamage = onlyADCoreCausingDamage;

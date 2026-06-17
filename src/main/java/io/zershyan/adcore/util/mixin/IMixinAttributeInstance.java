@@ -1,19 +1,11 @@
 package io.zershyan.adcore.util.mixin;
 
-import net.minecraft.world.entity.LivingEntity;
 import net.minecraft.world.entity.ai.attributes.AttributeModifier;
 import org.spongepowered.asm.mixin.Unique;
 
-import java.util.concurrent.Callable;
-import java.util.function.Function;
+import java.util.Collection;
 
-public interface IMixinAttributeModifier {
+public interface IMixinAttributeInstance {
     @Unique
-    AttributeModifier adcore$condition(LivingEntity entity, Function<LivingEntity, Boolean> condition);
-
-    @Unique
-    boolean adcore$runCondition();
-
-    @Unique
-    boolean adcore$hasCondition();
+    Collection<AttributeModifier> adcore$getModifiersOrEmpty(AttributeModifier.Operation operation);
 }

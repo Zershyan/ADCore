@@ -10,7 +10,7 @@ import net.minecraft.resources.ResourceKey;
 import net.minecraft.world.damagesource.DamageSource;
 import net.minecraft.world.damagesource.DamageType;
 
-public class ModDamageTypes {
+public class ADCDamageTypes {
     public static final ResourceKey<DamageType> NORMAL_DAMAGE = ResourceKey.create(Registries.DAMAGE_TYPE,
             Identifier.fromNamespaceAndPath(ADCore.MODID, "normal_damage"));
     public static final ResourceKey<DamageType> ATTACK_DAMAGE = ResourceKey.create(Registries.DAMAGE_TYPE,
@@ -27,7 +27,7 @@ public class ModDamageTypes {
         context.register(TRUE_DAMAGE, new DamageType(getMsgId(TRUE_DAMAGE), 0.0f));
     }
 
-    private static String getMsgId(ResourceKey<DamageType> key) {
+    public static String getMsgId(ResourceKey<DamageType> key) {
         return key.identifier().getNamespace() + "." + key.identifier().getPath();
     }
 

@@ -12,11 +12,11 @@ import java.util.Set;
 
 import static net.minecraft.commands.Commands.literal;
 
-public class ModCommands {
+public class ADCCommands {
     static final Set<String> adcoreCommand = new HashSet<>(Set.of(ADCore.MODID, "adc"));
 
     public static void register(IEventBus neoBus) {
-        neoBus.addListener(ModCommands::commonCommandRegister);
+        neoBus.addListener(ADCCommands::commonCommandRegister);
     }
 
     public static void commonCommandRegister(RegisterCommandsEvent event) {

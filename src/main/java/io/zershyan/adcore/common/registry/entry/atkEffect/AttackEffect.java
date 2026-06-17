@@ -1,4 +1,4 @@
-package io.zershyan.adcore.common.registry.atkEffect;
+package io.zershyan.adcore.common.registry.entry.atkEffect;
 
 import com.google.common.collect.HashMultimap;
 import com.google.common.collect.Multimap;

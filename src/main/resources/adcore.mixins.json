@@ -2,8 +2,11 @@
 	"required": true,
 	"minVersion": "0.8",
 	"package": "io.zershyan.adcore.mixin",
-	"compatibilityLevel": "JAVA_21",
+	"compatibilityLevel": "JAVA_25",
 	"mixins": [
+		"adcore.common.MixinAttributeInstance",
+		"adcore.common.MixinDamageSource",
+		"adcore.common.MixinLivingEntity"
 	],
 	"client": [
 	],

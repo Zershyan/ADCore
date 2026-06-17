@@ -1,18 +1,18 @@
 package io.zershyan.adcore.common.event;
 
-import io.zershyan.adcore.common.registry.ModAttributes;
+import io.zershyan.adcore.common.registry.ADCAttributes;
 import net.minecraft.world.entity.LivingEntity;
 import net.neoforged.bus.api.Event;
 
 /**
  * Before heal-amplify be applied.
  */
-public class ADCoreHealAmplifyEvent extends Event {
+public class ADCHealAmplifyEvent extends Event {
     private final float originRate;
     private final LivingEntity entity;
     private float newRate;
     private boolean isCancelled = false;
-    public ADCoreHealAmplifyEvent(LivingEntity entity, float rate) {
+    public ADCHealAmplifyEvent(LivingEntity entity, float rate) {
         this.entity = entity;
         this.originRate = rate;
         this.newRate = rate;
@@ -27,7 +27,7 @@ public class ADCoreHealAmplifyEvent extends Event {
     }
 
     public float getNewRate() {
-        return (float) ModAttributes.HEAL_AMPLIFY.value().sanitizeValue(newRate);
+        return (float) ADCAttributes.HEAL_AMPLIFY.value().sanitizeValue(newRate);
     }
 
     public boolean isCancelled() {

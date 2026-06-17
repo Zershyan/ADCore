@@ -1,8 +1,8 @@
-package io.zershyan.adcore.common;
+package io.zershyan.adcore.common.handler;
 
 import io.zershyan.adcore.ADCore;
 import io.zershyan.adcore.api.ADCoreAPI;
-import io.zershyan.adcore.api.helper.AttributeHelper;
+import io.zershyan.adcore.api.helper.ADCHelper;
 import io.zershyan.adcore.common.event.*;
 import io.zershyan.adcore.common.registry.ADCDamageTypes;
 import net.minecraft.server.level.ServerPlayer;
@@ -22,7 +22,7 @@ import net.neoforged.neoforge.event.entity.living.LivingDamageEvent;
 import net.neoforged.neoforge.event.entity.living.LivingHealEvent;
 
 @EventBusSubscriber(modid = ADCore.MODID)
-public class ADCoreCoreHandler {
+public class ADCoreHandler {
     @SubscribeEvent(priority = EventPriority.HIGHEST)
     public static void cancelOriginAttack(EntityInvulnerabilityCheckEvent event) {
         DamageSource damageSource = event.getSource();
@@ -55,8 +55,8 @@ public class ADCoreCoreHandler {
         if(event.getEntity().asLivingEntity() instanceof LivingEntity target) {
             if(damageSource.is(DamageTypeTags.BYPASSES_RESISTANCE)) return;
             if(!ADCoreAPI.getModStatus(target)) return;
-            AttributeHelper attributeHelper = ADCoreAPI.attributeHelper(target);
-            float damageResistance = attributeHelper.getDamageResistance();
+            ADCHelper helper = ADCoreAPI.helper(target);
+            float damageResistance = helper.getDamageResistance();
             if(damageResistance == 0) return;
             float fix = Mth.clamp(1.0f - damageResistance, 0.0f, 1.0f);
             event.setNewDamage(newDamage * fix);
@@ -72,11 +72,11 @@ public class ADCoreCoreHandler {
         if(target == null) return;
         if(damageSource.getEntity() instanceof LivingEntity source) {
             if(!ADCoreAPI.getModStatus(source)) return;
-            AttributeHelper attributeHelper = ADCoreAPI.attributeHelper(source);
-            float amtLifeStealRate = attributeHelper.getAlmightyLifeSteal();
+            ADCHelper helper = ADCoreAPI.helper(source);
+            float amtLifeStealRate = helper.getAlmightyLifeSteal();
             float atkLifeStealRate = 0.0f;
             if(damageSource.is(ADCDamageTypes.ATTACK_DAMAGE)) {
-                atkLifeStealRate = attributeHelper.getAttackLifeSteal();
+                atkLifeStealRate = helper.getAttackLifeSteal();
             }
             ADCLifeStealEvent lifeStealEvent = NeoForge.EVENT_BUS.post(new ADCLifeStealEvent(
                     source, damageSource, newDamage, atkLifeStealRate, amtLifeStealRate));
@@ -92,7 +92,7 @@ public class ADCoreCoreHandler {
         if(amount == 0) return;
         LivingEntity entity = event.getEntity();
         if(!ADCoreAPI.getModStatus(entity)) return;
-        float healAmplify = ADCoreAPI.attributeHelper(entity).getHealAmplify();
+        float healAmplify = ADCoreAPI.helper(entity).getHealAmplify();
         ADCHealAmplifyEvent amplifyEvent = NeoForge.EVENT_BUS.post(new ADCHealAmplifyEvent(entity, healAmplify));
         if(amplifyEvent.isCancelled()) return;
         event.setAmount(amount + amount * amplifyEvent.getNewRate());

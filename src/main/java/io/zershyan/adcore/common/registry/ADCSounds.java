@@ -12,7 +12,7 @@ import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 
-public class ModSounds {
+public class ADCSounds {
     private static final DeferredRegister<SoundEvent> REGISTRY = DeferredRegister.create(Registries.SOUND_EVENT, ADCore.MODID);
 
     public static final List<Holder<SoundEvent>> SOUNDS = new ArrayList<>();

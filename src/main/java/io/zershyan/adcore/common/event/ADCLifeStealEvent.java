@@ -1,6 +1,6 @@
 package io.zershyan.adcore.common.event;
 
-import io.zershyan.adcore.common.registry.ModAttributes;
+import io.zershyan.adcore.common.registry.ADCAttributes;
 import net.minecraft.world.damagesource.DamageSource;
 import net.minecraft.world.entity.LivingEntity;
 import net.neoforged.bus.api.Event;
@@ -8,7 +8,7 @@ import net.neoforged.bus.api.Event;
 /**
  * Calculating life steal.
  */
-public class ADCoreLifeStealEvent extends Event {
+public class ADCLifeStealEvent extends Event {
     private final LivingEntity attacker;
     private final DamageSource source;
     private final float damage;
@@ -17,7 +17,7 @@ public class ADCoreLifeStealEvent extends Event {
     private float newAttackLifeStealRate;
     private float newAlmightyLifeStealRate;
     private boolean isCancelled = false;
-    public ADCoreLifeStealEvent(LivingEntity attacker, DamageSource source, float damage, float atkLSR, float amtLSR) {
+    public ADCLifeStealEvent(LivingEntity attacker, DamageSource source, float damage, float atkLSR, float amtLSR) {
         this.attacker = attacker;
         this.source = source;
         this.damage = damage;
@@ -56,7 +56,7 @@ public class ADCoreLifeStealEvent extends Event {
     }
 
     public float getTotalLifeSteal() {
-        return (float) ModAttributes.ALMIGHTY_LIFE_STEAL.value().sanitizeValue(newAlmightyLifeStealRate + newAttackLifeStealRate);
+        return (float) ADCAttributes.ALMIGHTY_LIFE_STEAL.value().sanitizeValue(newAlmightyLifeStealRate + newAttackLifeStealRate);
     }
 
     public boolean isCancelled() {

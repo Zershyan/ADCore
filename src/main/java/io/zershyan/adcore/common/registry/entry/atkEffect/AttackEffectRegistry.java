@@ -1,4 +1,4 @@
-package io.zershyan.adcore.common.registry.atkEffect;
+package io.zershyan.adcore.common.registry.entry.atkEffect;
 
 import io.zershyan.adcore.ADCore;
 import net.minecraft.core.Registry;

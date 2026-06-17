@@ -4,11 +4,111 @@ import io.zershyan.adcore.ADCore;
 
 import java.util.List;
 
-public enum ADCoreConfigLang {
+@SuppressWarnings("SpellCheckingInspection")
+public enum ADCConfigLang {
     //server
+    maxAttackEffectRepeatCount(
+            "maxCountAttackEffectSelfCycle",
+            "攻击特效触发其他攻击特效的次数上限",
+            "Max Number of 'AttackEffect trigger another AttackEffect'"
+    ),
 
     //client
-
+    showAttributeXOffset(
+            "showAttributeXOffset",
+            "显示属性X偏移",
+            "Show Attribute X Offset"
+    ),
+    showAttributeYOffset(
+            "showAttributeYOffset",
+            "显示属性Y偏移",
+            "Show Attribute Y Offset"
+    ),
+    showAttributeScale(
+            "showAttributeScale",
+            "显示属性缩放",
+            "Show Attribute Scale"
+    ),
+    showAttributeOverlay(
+            "showAttributeOverlay",
+            "显示具体属性数值",
+            "Show attribute detail values"
+    ),
+    showAtkSpeed(
+            "showAtkSpeed",
+            "显示攻击速度",
+            "Show Atk Speed"
+    ),
+    showMeleeAtk(
+            "showMeleeAtk",
+            "显示近战攻击力",
+            "Show Melee Atk"
+    ),
+    showRangedAtk(
+            "showRangedAtk",
+            "显示远程攻击力",
+            "Show Ranged Atk"
+    ),
+    showCriticalRate(
+            "showCriticalRate",
+            "显示暴击率",
+            "Show Critical Rate"
+    ),
+    showCriticalDamage(
+            "showCriticalDamage",
+            "显示暴击伤害",
+            "Show Critical Damage"
+    ),
+    showMeleeAmplify(
+            "showMeleeAmplify",
+            "显示近战增伤",
+            "Show Melee Amplify"
+    ),
+    showRangedAmplify(
+            "showRangedAmplify",
+            "显示远程增伤",
+            "Show Ranged Amplify"
+    ),
+    showHitRate(
+            "showHitRate",
+            "显示命中率",
+            "Show Hit Rate"
+    ),
+    showEvasionRate(
+            "showEvasionRate",
+            "显示闪避率",
+            "Show Evasion Rate"
+    ),
+    showMeleePenetration(
+            "showMeleePenetration",
+            "显示近战护甲穿透",
+            "Show Melee Armor Penetration"
+    ),
+    showRangedPenetration(
+            "showRangedPenetration",
+            "显示远程护甲穿透",
+            "Show Ranged Armor Penetration"
+    ),
+    showAttackLifeSteal(
+            "showAttackLifeSteal",
+            "显示生命偷取",
+            "Show Attack Life Steal"
+    ),
+    showAlmightyLifeSteal(
+            "showAlmightyLifeSteal",
+            "显示全能吸血",
+            "Show Almighty Life Steal"
+    ),
+    showHealAmplify(
+            "showHealAmplify",
+            "显示治疗效果提升",
+            "Show Healing Effect Amplify"
+    ),
+    showDamageResistance(
+            "showDamageResistance",
+            "显示减伤",
+            "Show Damage Resistance"
+    ),
 
     //common
     atkDamageConvert(
@@ -19,7 +119,7 @@ public enum ADCoreConfigLang {
     adcoreItemDamage(
             "adcoreItemDamage",
             "仅使用ADCore伤害时损耗物品耐久",
-            "Item break when Only-ADCore-Damage on"
+            "Item Break When Only-ADCore-Damage On"
     ),
 
     //startup
@@ -108,6 +208,16 @@ public enum ADCoreConfigLang {
             "治疗效果提升",
             "Healing Effect Amplify"
     ),
+    baseDamageResistance(
+            "baseDamageResistance",
+            "减伤",
+            "Damage Resistance"
+    ),
+    enableExample(
+            "enableExample",
+            "开启ADCore的代码示例",
+            "Enable ADCore Code Example"
+    ),
 
     //type
     attributeDefault(
@@ -115,13 +225,23 @@ public enum ADCoreConfigLang {
             "默认属性值",
             "Default Attribute"
     ),
+    developmentConfig(
+            "developmentConfig",
+            "开发环境配置",
+            "Development Config"
+    ),
+    attributeOverlay(
+            "attributeOverlay",
+            "属性显示配置",
+            "Attribute Display Config"
+    )
 
     ;
 
     private final String name;
     private final ADCoreLang.Lang lang;
 
-    ADCoreConfigLang(String name, String zhCn, String enUs) {
+    ADCConfigLang(String name, String zhCn, String enUs) {
         this.name = name;
         this.lang = new ADCoreLang.Lang(zhCn, enUs);
     }
@@ -135,7 +255,7 @@ public enum ADCoreConfigLang {
     }
 
     public static void initLang(List<ADCoreLang.LangEntity<?>> langList) {
-        for (ADCoreConfigLang value : ADCoreConfigLang.values()) {
+        for (ADCConfigLang value : ADCConfigLang.values()) {
             langList.add(new ADCoreLang.LangEntity<>(value.getKey(), value.lang));
         }
     }

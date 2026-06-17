@@ -1,7 +1,7 @@
-package io.zershyan.adcore.datagen.provider.server;
+package io.zershyan.adcore.datagen.provider;
 
 import io.zershyan.adcore.ADCore;
-import io.zershyan.adcore.common.registry.ModDamageTypes;
+import io.zershyan.adcore.common.registry.ADCDamageTypes;
 import net.minecraft.core.HolderLookup;
 import net.minecraft.data.PackOutput;
 import net.minecraft.data.tags.DamageTypeTagsProvider;
@@ -17,14 +17,27 @@ public class ModDamageTypeTagsProvider extends DamageTypeTagsProvider {
 
     @Override
     protected void addTags(HolderLookup.@NotNull Provider registries) {
+        tag(DamageTypeTags.IS_PLAYER_ATTACK)
+                .add(ADCDamageTypes.NORMAL_DAMAGE)
+                .add(ADCDamageTypes.ATTACK_DAMAGE)
+                .add(ADCDamageTypes.MAGIC_DAMAGE)
+                .add(ADCDamageTypes.TRUE_DAMAGE);
         tag(DamageTypeTags.BYPASSES_COOLDOWN)
-                .add(ModDamageTypes.NORMAL_DAMAGE)
-                .add(ModDamageTypes.MAGIC_DAMAGE)
-                .add(ModDamageTypes.TRUE_DAMAGE);
+                .add(ADCDamageTypes.NORMAL_DAMAGE)
+                .add(ADCDamageTypes.ATTACK_DAMAGE)
+                .add(ADCDamageTypes.MAGIC_DAMAGE)
+                .add(ADCDamageTypes.TRUE_DAMAGE);
         tag(DamageTypeTags.BYPASSES_ARMOR)
-                .add(ModDamageTypes.MAGIC_DAMAGE)
-                .add(ModDamageTypes.TRUE_DAMAGE);
+                .add(ADCDamageTypes.MAGIC_DAMAGE)
+                .add(ADCDamageTypes.TRUE_DAMAGE);
+        tag(DamageTypeTags.BYPASSES_WOLF_ARMOR)
+                .add(ADCDamageTypes.MAGIC_DAMAGE)
+                .add(ADCDamageTypes.TRUE_DAMAGE);
         tag(DamageTypeTags.BYPASSES_RESISTANCE)
-                .add(ModDamageTypes.TRUE_DAMAGE);
+                .add(ADCDamageTypes.TRUE_DAMAGE);
+        tag(DamageTypeTags.BYPASSES_EFFECTS)
+                .add(ADCDamageTypes.TRUE_DAMAGE);
+        tag(DamageTypeTags.BYPASSES_ENCHANTMENTS)
+                .add(ADCDamageTypes.TRUE_DAMAGE);
     }
 }

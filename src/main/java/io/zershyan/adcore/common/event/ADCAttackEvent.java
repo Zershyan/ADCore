@@ -1,48 +1,28 @@
 package io.zershyan.adcore.common.event;
 
 import io.zershyan.adcore.api.ADCoreAPI;
-import io.zershyan.adcore.common.registry.ModAttributes;
+import io.zershyan.adcore.common.registry.ADCAttributes;
 import net.minecraft.world.damagesource.DamageSource;
 import net.minecraft.world.entity.LivingEntity;
 import net.neoforged.bus.api.Event;
+import net.neoforged.bus.api.ICancellableEvent;
 
-public abstract class ADCoreAttackEvent extends Event {
+public abstract class ADCAttackEvent extends Event {
     private final LivingEntity attacker;
-    private boolean isCancelled = false;
-    private final boolean cancelable;
-    public ADCoreAttackEvent(LivingEntity attacker) {
+    public ADCAttackEvent(LivingEntity attacker) {
         this.attacker = attacker;
-        this.cancelable = false;
-    }
-
-    public ADCoreAttackEvent(LivingEntity attacker, boolean cancelable) {
-        this.attacker = attacker;
-        this.cancelable = cancelable;
     }
 
     public LivingEntity getAttacker() {
         return attacker;
     }
 
-    public boolean isCancelled() {
-        return isCancelled;
-    }
-
-    public void setCancel(boolean cancel) {
-        if(!cancelable) return;
-        this.isCancelled = cancel;
-    }
-
-    public boolean isCancelable() {
-        return cancelable;
-    }
-
     /**
      * Before all the attack logic.
      */
-    public static class Pre extends ADCoreAttackEvent {
+    public static class Pre extends ADCAttackEvent implements ICancellableEvent{
         public Pre(LivingEntity attacker) {
-            super(attacker, true);
+            super(attacker);
         }
     }
 
@@ -50,7 +30,7 @@ public abstract class ADCoreAttackEvent extends Event {
      * Attack-cooldown detecting now.
      * It isn't cancelable.
      */
-    public static class Cooldown extends ADCoreAttackEvent {
+    public static class Cooldown extends ADCAttackEvent {
         private boolean isCooldown;
         public Cooldown(LivingEntity attacker, boolean isCooldown) {
             super(attacker);
@@ -70,7 +50,7 @@ public abstract class ADCoreAttackEvent extends Event {
      * Hit judgment now.
      * It isn't cancelable.
      */
-    public static class HitRate extends ADCoreAttackEvent {
+    public static class HitRate extends ADCAttackEvent {
         private boolean canHit;
         public HitRate(LivingEntity attacker, boolean isCanHit) {
             super(attacker);
@@ -90,7 +70,7 @@ public abstract class ADCoreAttackEvent extends Event {
      * Getting atk now.
      * It isn't cancelable.
      */
-    public static class Atk extends ADCoreAttackEvent {
+    public static class Atk extends ADCAttackEvent {
         private float atk;
         public Atk(LivingEntity attacker, float atk) {
             super(attacker);
@@ -98,7 +78,7 @@ public abstract class ADCoreAttackEvent extends Event {
         }
 
         public float getAtk() {
-            return (float) ModAttributes.MELEE_ATK.value().sanitizeValue(atk);
+            return (float) ADCAttributes.MELEE_ATK.value().sanitizeValue(atk);
         }
 
         public void setAtk(float atk) {
@@ -110,17 +90,23 @@ public abstract class ADCoreAttackEvent extends Event {
      * Before calculate critical.
      * Rate: 1.0 == 100%
      */
-    public static class PreCalCritical extends ADCoreAttackEvent {
+    public static class PreCalCritical extends ADCAttackEvent implements ICancellableEvent {
         private final float originDamage;
+        private final LivingEntity target;
         private final DamageSource source;
         private float criticalRate;
         private float newDamage;
-        public PreCalCritical(LivingEntity attacker, DamageSource source, float criticalRate, float originDamage) {
-            super(attacker, true);
+        public PreCalCritical(LivingEntity attacker, LivingEntity target, DamageSource source, float criticalRate, float originDamage) {
+            super(attacker);
+            this.target = target;
             this.source = source;
             this.criticalRate = criticalRate;
             this.originDamage = originDamage;
             this.newDamage = originDamage;
+        }
+
+        public LivingEntity getTarget() {
+            return target;
         }
 
         public float getOriginDamage() {
@@ -128,7 +114,7 @@ public abstract class ADCoreAttackEvent extends Event {
         }
 
         public float getCriticalRate() {
-            return (float) ModAttributes.CRITICAL_RATE.value().sanitizeValue(criticalRate);
+            return (float) ADCAttributes.CRITICAL_RATE.value().sanitizeValue(criticalRate);
         }
 
         public void setCriticalRate(float criticalRate) {
@@ -151,11 +137,11 @@ public abstract class ADCoreAttackEvent extends Event {
     /**
      * Before calculate amplify.
      */
-    public static class PreCalAmplify extends ADCoreAttackEvent {
+    public static class PreCalAmplify extends ADCAttackEvent implements ICancellableEvent {
         private final float originDamage;
         private float newDamage;
         public PreCalAmplify(LivingEntity attacker, float originDamage) {
-            super(attacker, true);
+            super(attacker);
             this.originDamage = originDamage;
             this.newDamage = originDamage;
         }
@@ -177,7 +163,7 @@ public abstract class ADCoreAttackEvent extends Event {
      * After the damage application.
      * It isn't cancelable.
      */
-    public static class Post extends ADCoreAttackEvent {
+    public static class Post extends ADCAttackEvent {
         private final DamageSource source;
         private final float damage;
         private final boolean hurtSuccess;
